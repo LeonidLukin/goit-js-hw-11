@@ -20,7 +20,11 @@ const {
 };
 
 function createImageEl(hits) {
-  console.log(hits);
+  //   console.log(hits.length);
+  //   console.log(hits);
+
+  //   console.log(fetchImages);
+
   const markup = hits
     .map(({
       webformatURL,
@@ -52,11 +56,11 @@ function createImageEl(hits) {
     })
     .join('');
   gallery.insertAdjacentHTML('beforeend', markup);
-  // console.log(refs.galleryEl);
-  // ==========вызываем библиотеку лайтбокс для красивой галлереи============
+
+
   simpleLightbox();
   scroll();
-  // =========показываем кнопку "загрузить еще" и кнопку "наверх" ====
+
   loadMoreBtn.style =
     ' display: flex;  margin-left: auto;  margin-right: auto; margin-bottom:32px; margin-top:32px; padding:16px; border: 1px solid green; border-radius:8px; background-color: yellow';
   goUpBtn.style =
@@ -72,6 +76,15 @@ let lightbox = new SimpleLightbox('.photo-card a', {
 let currentPage = 1;
 let currentHits = 0;
 let searchQuery = '';
+
+// let calcTotalPages = onTotalPages(hits.length);
+// // console.log('calcTotalPages', calcTotalPages);
+// if (calcTotalPages >= totalHits) {
+//   loadMoreBtn.classList.add('is-hidden');
+//   Notify.info("We're sorry, but you've reached the end of search results.", {
+//     position: 'center-bottom',
+//   });
+// }
 
 searchForm.addEventListener('submit', onSubmitSearchForm);
 
@@ -119,6 +132,8 @@ async function onSubmitSearchForm(e) {
       loadMoreBtn.classList.add('is-hidden');
       endCollectionText.classList.add('is-hidden');
     }
+
+
   } catch (error) {
     console.log(error);
   }
@@ -133,7 +148,11 @@ async function onClickLoadMoreBtn() {
   lightbox.refresh();
   currentHits += response.hits.length;
 
-  if (currentHits === response.totalHits) {
+  // if (currentHits === response.totalHits) {
+  //   loadMoreBtn.classList.add('is-hidden');
+  //   endCollectionText.classList.remove('is-hidden');
+  // }
+  if (currentHits >= response.totalHits) {
     loadMoreBtn.classList.add('is-hidden');
     endCollectionText.classList.remove('is-hidden');
   }
