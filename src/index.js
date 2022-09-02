@@ -19,11 +19,17 @@ const {
   endCollectionText: document.querySelector('.end-collection-text'),
 };
 
-function createImageEl(hits) {
-  //   console.log(hits.length);
-  //   console.log(hits);
+const lightbox = new SimpleLightbox('.photo-card', {
+  captions: true,
+  captionsData: 'alt',
+  captionDelay: 250,
+});
 
-  //   console.log(fetchImages);
+let currentPage = 1;
+let currentHits = 0;
+let searchQuery = '';
+
+function createImageEl(hits) {
 
   const markup = hits
     .map(({
@@ -57,34 +63,8 @@ function createImageEl(hits) {
     .join('');
   gallery.insertAdjacentHTML('beforeend', markup);
 
-
-  simpleLightbox();
-  scroll();
-
-  loadMoreBtn.style =
-    ' display: flex;  margin-left: auto;  margin-right: auto; margin-bottom:32px; margin-top:32px; padding:16px; border: 1px solid green; border-radius:8px; background-color: yellow';
-  goUpBtn.style =
-    'position: fixed; bottom: 32px;right: 32px; border-radius: 50%; width: 80px; height: 80px; background-color: lime; color: blue; border: 1px solid blue';
+  lightbox.refresh();
 }
-
-let lightbox = new SimpleLightbox('.photo-card a', {
-  captions: true,
-  captionsData: 'alt',
-  captionDelay: 250,
-});
-
-let currentPage = 1;
-let currentHits = 0;
-let searchQuery = '';
-
-// let calcTotalPages = onTotalPages(hits.length);
-// // console.log('calcTotalPages', calcTotalPages);
-// if (calcTotalPages >= totalHits) {
-//   loadMoreBtn.classList.add('is-hidden');
-//   Notify.info("We're sorry, but you've reached the end of search results.", {
-//     position: 'center-bottom',
-//   });
-// }
 
 searchForm.addEventListener('submit', onSubmitSearchForm);
 
@@ -133,7 +113,6 @@ async function onSubmitSearchForm(e) {
       endCollectionText.classList.add('is-hidden');
     }
 
-
   } catch (error) {
     console.log(error);
   }
@@ -143,15 +122,12 @@ loadMoreBtn.addEventListener('click', onClickLoadMoreBtn);
 
 async function onClickLoadMoreBtn() {
   currentPage += 1;
+
   const response = await fetchImages(searchQuery, currentPage);
+
   createImageEl(response.hits);
-  lightbox.refresh();
   currentHits += response.hits.length;
 
-  // if (currentHits === response.totalHits) {
-  //   loadMoreBtn.classList.add('is-hidden');
-  //   endCollectionText.classList.remove('is-hidden');
-  // }
   if (currentHits >= response.totalHits) {
     loadMoreBtn.classList.add('is-hidden');
     endCollectionText.classList.remove('is-hidden');
